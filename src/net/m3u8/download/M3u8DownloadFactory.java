@@ -1,6 +1,6 @@
 package net.m3u8.download;
 
-import net.m3u8.Exception.M3u8Exception;
+import net.m3u8.exception.M3u8Exception;
 import net.m3u8.listener.DownloadListener;
 import net.m3u8.utils.Constant;
 import net.m3u8.utils.Log;
@@ -11,7 +11,15 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -22,8 +30,18 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static net.m3u8.utils.Constant.FILESEPARATOR;
 
@@ -208,11 +226,25 @@ public class M3u8DownloadFactory {
                 else file.createNewFile();
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
                 byte[] b = new byte[4096];
+                boolean isFirst = true;
                 for (File f : finishedFiles) {
                     FileInputStream fileInputStream = new FileInputStream(f);
                     int len;
                     while ((len = fileInputStream.read(b)) != -1) {
-                        fileOutputStream.write(b, 0, len);
+                        if (isFirst) {
+                            int index = -1;
+                            for (int i = 0; i < b.length; i++) {
+                                if (b[i] == 0x47 && b[i + 1] == 0x42) {
+                                    index = i;
+                                    break;
+                                }
+                            }
+
+                            fileOutputStream.write(b, Math.max(index, 0), len - index);
+                            isFirst = false;
+                        } else {
+                            fileOutputStream.write(b, 0, len);
+                        }
                     }
                     fileInputStream.close();
                     fileOutputStream.flush();
@@ -263,9 +295,9 @@ public class M3u8DownloadFactory {
                     try {
                         //模拟http请求获取ts片段文件
                         URL url = new URL(urls);
-                        if (proxy ==null) {
+                        if (proxy == null) {
                             httpURLConnection = (HttpURLConnection) url.openConnection();
-                        }else {
+                        } else {
                             httpURLConnection = (HttpURLConnection) url.openConnection(proxy);
                         }
                         httpURLConnection.setConnectTimeout((int) timeoutMillisecond);
@@ -442,9 +474,9 @@ public class M3u8DownloadFactory {
             while (count <= retryCount) {
                 try {
                     URL url = new URL(urls);
-                    if (proxy ==null) {
+                    if (proxy == null) {
                         httpURLConnection = (HttpURLConnection) url.openConnection();
-                    }else {
+                    } else {
                         httpURLConnection = (HttpURLConnection) url.openConnection(proxy);
                     }
                     httpURLConnection.setConnectTimeout((int) timeoutMillisecond);

@@ -1,4 +1,4 @@
-package net.m3u8.Exception;
+package net.m3u8.exception;
 
 /**
  * @author liyaling

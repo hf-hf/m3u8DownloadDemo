@@ -12,15 +12,14 @@ import net.m3u8.utils.Constant;
 
 public class M3u8Main {
 
-    private static final String M3U8URL = "https://youku.cdn-56.com/20180109/2SwCGxb4/index.m3u8";
+    private static final String M3U8URL = "https://yun.66dm.net/SBDM/SPYFAMILY01.m3u8";
 
     public static void main(String[] args) {
-
         M3u8DownloadFactory.M3u8Download m3u8Download = M3u8DownloadFactory.getInstance(M3U8URL);
         //设置生成目录
-        m3u8Download.setDir("F://m3u8JavaTest");
+        m3u8Download.setDir("E:\\VIDEO");
         //设置视频名称
-        m3u8Download.setFileName("test");
+        m3u8Download.setFileName("real2");
         //设置线程数
         m3u8Download.setThreadCount(100);
         //设置重试次数

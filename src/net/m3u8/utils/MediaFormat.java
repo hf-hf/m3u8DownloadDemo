@@ -1,6 +1,6 @@
 package net.m3u8.utils;
 
-import net.m3u8.Exception.M3u8Exception;
+import net.m3u8.exception.M3u8Exception;
 
 import java.util.HashSet;
 import java.util.Set;

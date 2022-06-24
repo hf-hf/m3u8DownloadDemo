@@ -4,6 +4,8 @@ import net.m3u8.download.M3u8DownloadFactory;
 import net.m3u8.listener.DownloadListener;
 import net.m3u8.utils.Constant;
 
+import java.util.Scanner;
+
 /**
  * @author liyaling
  * @email ts_liyaling@qq.com
@@ -12,14 +14,21 @@ import net.m3u8.utils.Constant;
 
 public class M3u8Main {
 
-    private static final String M3U8URL = "https://yun.66dm.net/SBDM/SPYFAMILY01.m3u8";
+    //private static final String M3U8URL = "https://yun.66dm.net/SBDM/SPYFAMILY01.m3u8";
 
     public static void main(String[] args) {
-        M3u8DownloadFactory.M3u8Download m3u8Download = M3u8DownloadFactory.getInstance(M3U8URL);
+        Scanner sc = new Scanner(System.in);
+        System.out.print("\nM3U8 URL: ");
+        String url = sc.next();
+        System.out.print("\nOutput FOLDER path: ");
+        String folder = sc.next();
+        System.out.print("\nOutput file name: ");
+        String name = sc.next();
+        M3u8DownloadFactory.M3u8Download m3u8Download = M3u8DownloadFactory.getInstance(url);
         //设置生成目录
-        m3u8Download.setDir("E:\\VIDEO");
+        m3u8Download.setDir(folder);
         //设置视频名称
-        m3u8Download.setFileName("real2");
+        m3u8Download.setFileName(name);
         //设置线程数
         m3u8Download.setThreadCount(100);
         //设置重试次数
